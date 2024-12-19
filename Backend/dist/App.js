@@ -16,22 +16,11 @@ const express_1 = __importDefault(require("express"));
 const app = (0, express_1.default)();
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const JWT_SECRET = "harshal";
-const path_1 = __importDefault(require("path"));
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const cors_1 = __importDefault(require("cors"));
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
-app.get('/', (req, res) => {
-    const filePath = path_1.default.join(__dirname, '..', '..', 'front-end', 'index.html');
-    // const filePath2 = __dirname + "../../fornt-end/index.html"
-    res.sendFile(filePath);
-    // res.json({
-    //   message : filePath,
-    //   message2: filePath2
-    // })
-    // res.sendFile(__dirname + "../../fornt-end/index.html")
-});
 // @ts-ignore
 app.post('/second-brain/sign-up', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { firstName, lastName, email, password, username } = req.body;
@@ -51,6 +40,7 @@ app.post('/second-brain/sign-up', (req, res) => __awaiter(void 0, void 0, void 0
         res.json({
             message: "user has been sign up "
         });
+        console.log(user);
     }
     catch (e) {
         console.log(e);
@@ -71,11 +61,14 @@ app.post('/second-brain/login', (req, res) => __awaiter(void 0, void 0, void 0, 
         });
         if (find) {
             const token = jsonwebtoken_1.default.sign({
-                username: username
+                username: username,
             }, JWT_SECRET);
+            // giving token to the header for dashboard purpose 
+            res.header("Token", token);
             res.json({
                 token: token
             });
+            console.log(token);
         }
         else {
             res.json({
@@ -89,12 +82,61 @@ app.post('/second-brain/login', (req, res) => __awaiter(void 0, void 0, void 0, 
         });
     }
 }));
-app.get("/second-brain", (req, res) => {
-    const filePath = path_1.default.join(__dirname, '..', 'index.html');
-    res.sendFile(filePath);
-    console.log(filePath);
-    console.log(__dirname);
-    console.log(__filename);
+// @ts-ignore
+app.post("/second-brain/create-post", function (req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { title, description, link } = req.body;
+        console.log(title);
+        console.log(description);
+        console.log(link);
+        const token = req.headers.Token;
+        console.log(token);
+        const tokenInfo = jsonwebtoken_1.default.verify(`${token}`, JWT_SECRET);
+        console.log(tokenInfo);
+        // @ts-ignore
+        console.log(tokenInfo.username);
+        try {
+            const user = yield prisma.user.findUnique({
+                where: {
+                    // @ts-ignore
+                    username: tokenInfo.username
+                }
+            });
+            console.log(user === null || user === void 0 ? void 0 : user.id);
+            if (user) {
+                const content = yield prisma.content.create({
+                    data: {
+                        title: title,
+                        description: description,
+                        link: link,
+                        userId: user.id
+                    }
+                });
+                res.json({
+                    message: " content is uplaoded"
+                });
+            }
+        }
+        catch (e) {
+            res.json({
+                message: "app.ts issue",
+                error: e
+            });
+        }
+    });
 });
+// @ts-ignore
+// function auth (req,res,next){
+//   const token = req.headers.Token; 
+//   const tokenInfo = jwt.verify(token,JWT_SECRET) ;
+//   if(tokenInfo){
+//     req.username = tokenInfo.username ;
+//     next();
+//   }else{
+//     res.json({
+//       MESSAGE : "YOU ARE LOGGED IN "
+//     }) ;
+//   }
+// }
 const port = 3001;
 app.listen(port);
