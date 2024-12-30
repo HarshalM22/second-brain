@@ -1,18 +1,21 @@
 import { useState } from "react"
-
+import axios from "axios";
 export function Card(){
      const [title , setTitle] = useState("") ;
      const [description , setDesc] = useState("") ;
      const [link , setLink] = useState("") ;
      
-     
      const createContent = async ()=>{
-        const content = {title:title ,description:description , link:link};
+        
         try{
-            await fetch("http://localhost:3001/second-brain/create-post",{
-                method : 'POST',
-                headers :{ 'Content-Type' : 'application/json'},
-                body : JSON.stringify(content) 
+            await axios.post("http://localhost:3001/second-brain/create-post",{
+            title,
+            description,
+            link
+            },{
+                headers :{
+                    token : localStorage.getItem('token') 
+                }
             })
         }
         catch(error){

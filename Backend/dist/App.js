@@ -22,7 +22,7 @@ const cors_1 = __importDefault(require("cors"));
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 // @ts-ignore
-app.post('/second-brain/sign-up', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post("/second-brain/sign-up", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { firstName, lastName, email, password, username } = req.body;
     if (!firstName || !lastName || !email || !password || !username) {
         return res.status(400).json({ error: "All fields are required." });
@@ -34,41 +34,39 @@ app.post('/second-brain/sign-up', (req, res) => __awaiter(void 0, void 0, void 0
                 firstName: firstName,
                 lastName: lastName,
                 email: email,
-                password: password
-            }
+                password: password,
+            },
         });
         res.json({
-            message: "user has been sign up "
+            message: "user has been sign up ",
         });
-        console.log(user);
     }
     catch (e) {
         console.log(e);
         res.json({
-            message: " error while signing up"
+            message: " error while signing up",
         });
     }
 }));
-app.post('/second-brain/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post("/second-brain/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const username = req.body.username;
     const password = req.body.password;
+    const email = req.body.email;
     try {
         const find = yield prisma.user.findUnique({
             where: {
                 username: username,
-                password: password
-            }
+                password: password,
+                email: email,
+            },
         });
         if (find) {
             const token = jsonwebtoken_1.default.sign({
-                username: username,
+                userId: find.id
             }, JWT_SECRET);
-            // giving token to the header for dashboard purpose 
-            res.header("Token", token);
             res.json({
                 token: token
             });
-            console.log(token);
         }
         else {
             res.json({
@@ -78,65 +76,83 @@ app.post('/second-brain/login', (req, res) => __awaiter(void 0, void 0, void 0, 
     }
     catch (e) {
         res.json({
-            message: " error while loging in "
+            message: e
         });
     }
 }));
-// @ts-ignore
-app.post("/second-brain/create-post", function (req, res) {
+//  @ts-ignore
+function auth(req, res, next) {
+    const token = req.headers.token;
+    console.log(token);
+    const tokenInfo = jsonwebtoken_1.default.verify(token, JWT_SECRET);
+    const jwtPayload = tokenInfo;
+    if (jwtPayload.userId) {
+        req.body.userId = jwtPayload.userId;
+        next();
+    }
+    else {
+        res.json({
+            MESSAGE: "YOU ARE LOGGED IN "
+        });
+    }
+}
+//@ts-ignore
+app.get("/me", auth, function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { title, description, link } = req.body;
-        console.log(title);
-        console.log(description);
-        console.log(link);
-        const token = req.headers.Token;
-        console.log(token);
-        const tokenInfo = jsonwebtoken_1.default.verify(`${token}`, JWT_SECRET);
-        console.log(tokenInfo);
-        // @ts-ignore
-        console.log(tokenInfo.username);
+        const userId = req.body.userId;
+        try {
+            const find = yield prisma.content.findMany({
+                where: {
+                    userId: userId
+                }
+            });
+            console.log(find);
+            if (find) {
+                res.json({
+                    find,
+                    userId
+                });
+            }
+        }
+        catch (e) {
+            res.json({
+                msg: "error", e
+            });
+        }
+    });
+});
+// @ts-ignore
+app.post("/second-brain/create-post", auth, function (req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { title, description, link, userId } = req.body;
         try {
             const user = yield prisma.user.findUnique({
                 where: {
-                    // @ts-ignore
-                    username: tokenInfo.username
+                    id: userId
                 }
             });
-            console.log(user === null || user === void 0 ? void 0 : user.id);
             if (user) {
                 const content = yield prisma.content.create({
                     data: {
                         title: title,
                         description: description,
                         link: link,
-                        userId: user.id
-                    }
+                        userId: userId
+                    },
                 });
                 res.json({
-                    message: " content is uplaoded"
+                    message: " content is uplaoded",
                 });
             }
         }
         catch (e) {
             res.json({
                 message: "app.ts issue",
-                error: e
+                error: e,
             });
         }
     });
 });
 // @ts-ignore
-// function auth (req,res,next){
-//   const token = req.headers.Token; 
-//   const tokenInfo = jwt.verify(token,JWT_SECRET) ;
-//   if(tokenInfo){
-//     req.username = tokenInfo.username ;
-//     next();
-//   }else{
-//     res.json({
-//       MESSAGE : "YOU ARE LOGGED IN "
-//     }) ;
-//   }
-// }
 const port = 3001;
 app.listen(port);

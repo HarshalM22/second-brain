@@ -1,9 +1,9 @@
-import { Landingpage } from './components/Landingpage';
-import { Dashboard } from './components/Dashboard';
+import { Landingpage } from './pages/Landingpage';
+import { Dashboard } from './pages/Dashboard';
 // import { Navbar } from './components/Navbar';
 import { BrowserRouter,Route,Routes} from 'react-router-dom';
-import { Signuppage } from './components/Signuppage';
-import { Loginpage } from './components/Loginpage';
+import { Signuppage } from './pages/Signuppage';
+import { Loginpage } from './pages/Loginpage';
 
 export default function App(){
  
