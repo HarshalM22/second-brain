@@ -107,7 +107,7 @@ app.get("/me",auth,async function(req,res){
       if(find){
         res.json({
           find ,
-          userId
+          userId : userId 
         })
       }
 

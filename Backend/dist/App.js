@@ -110,7 +110,7 @@ app.get("/me", auth, function (req, res) {
             if (find) {
                 res.json({
                     find,
-                    userId
+                    userId: userId
                 });
             }
         }
