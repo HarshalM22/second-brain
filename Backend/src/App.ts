@@ -140,14 +140,12 @@ app.post("/second-brain/create-post",auth, async function (req, res) {
           description: description,
           link: link,
           userId: userId
-        },
-      });
-
+        }}) 
+      };
       res.json({
         message: " content is uplaoded",
       });
-    }
-  } catch (e) {
+    } catch (e) {
     res.json({
       message: "app.ts issue",
       error: e,

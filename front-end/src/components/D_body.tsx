@@ -11,36 +11,40 @@ interface Props {
 }
 export function D_body(){
 
-    const [data,setData] = useState([])
+ const [data,setData] = useState([]) ;
+ const [shouldUpdate,setShouldUpdate] = useState(true);
 
     useEffect(()=>{
-        const fetchData = async()=>{
-            try{
+        if(shouldUpdate){
+         async function fetchData(){
+               
                 const response = await axios.get("http://localhost:3001/me",{
                     headers :{
                         token : localStorage.getItem('token')
                     }
                 })
-                setData(response.data.find)
-                }
-                catch(e){
-                    console.log(e);
-                }
-            }
-            fetchData()
 
+                setData(response.data.find)
+                setShouldUpdate(false);
+            }       
+            fetchData()
+         
             
-        },[])
+        }},[shouldUpdate])
+       
 
         return(
-            <div className="flex ">
-            <Card/>
-            <div className="flex mx-8">
+            <div className="flex">
+            <Card setShouldUpdate={setShouldUpdate}/>
+            <div className=" flex ">
                 {data.map((element : Props)=>{
                     return(
+                        <div >
                   <Contentcard key={element.link} title={element.title} description={element.description} link={element.link} />
-                    )
+                       </div>
+                        )
                 })}
+                
             </div>
             </div>
         )

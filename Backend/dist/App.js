@@ -138,12 +138,13 @@ app.post("/second-brain/create-post", auth, function (req, res) {
                         description: description,
                         link: link,
                         userId: userId
-                    },
-                });
-                res.json({
-                    message: " content is uplaoded",
+                    }
                 });
             }
+            ;
+            res.json({
+                message: " content is uplaoded",
+            });
         }
         catch (e) {
             res.json({
