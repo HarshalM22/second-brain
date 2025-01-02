@@ -7,7 +7,8 @@ import { Card } from "./Card";
 interface Props {
     title : string , 
     description : string , 
-    link : string
+    link : string ,
+    id : number
 }
 export function D_body(){
 
@@ -34,19 +35,20 @@ export function D_body(){
        
 
         return(
-            <div className="flex">
-            <Card setShouldUpdate={setShouldUpdate}/>
-            <div className=" flex ">
-                {data.map((element : Props)=>{
-                    return(
-                        <div >
-                  <Contentcard key={element.link} title={element.title} description={element.description} link={element.link} />
-                       </div>
-                        )
-                })}
+            <div className=" h-screen w-full bg-gradient-to-r from-primary to-secondary flex flex-col">
                 
-            </div>
-            </div>
+                <div className=" grid grid-rows-3">
+                    <Card setShouldUpdate={setShouldUpdate}/> 
+               
+                     <div className = " flex justify-evenly flex-wrap">
+                        {data.map((element : Props)=>{
+                            return(
+                                <Contentcard key={element.id} title={element.title} description={element.description} link={element.link} />
+                            )})}
+                     </div>
+                </div> 
+
+           </div>
         )
 
 }
