@@ -1,6 +1,6 @@
 import {  useState } from "react";
 import axios from "axios";
-
+import {BACKEND_URL} from "../../config";
 interface Cardprops {
     setShouldUpdate: (value: boolean) => void;
 }
@@ -14,7 +14,7 @@ export function Card({setShouldUpdate}: Cardprops){
 
     async function createContent() {
         try {
-            await axios.post("http://localhost:3001/second-brain/create-post", {
+            await axios.post(`${BACKEND_URL}/second-brain/create-post`, {
                 title,
                 description,
                 link,
@@ -33,7 +33,7 @@ export function Card({setShouldUpdate}: Cardprops){
     }
 
     return (
-        <div className="bg-slate-200 w-56 h-80 border-4 rounded-2xl absolute ml-32 mt-16 flex flex-col items-center ">
+        <div className="bg-slate-200 w-56 h-80 border-4 rounded-2xl  flex flex-col items-center ">
             <div className="h-2/4 flex items-center "> image </div>
             <div className=" h-2/4 flex flex-col items-center justify-evenly">
                 <input

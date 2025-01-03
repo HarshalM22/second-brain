@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Inputbox } from "../components/Inputbox";
+import { BACKEND_URL } from "../../config";
 export function Signuppage(){
     const [username,setUsername] = useState("");
     const [firstName,setFirstName] = useState("");
@@ -14,17 +16,25 @@ export function Signuppage(){
    
 
     return(
-        
-        
-            <div className="h-screen w-screen flex justify-center items-center">
-                <div className="bg-cyan-400 h-auto w-60 p-6 flex flex-col justify-center items-center space-y-4 text-black">
-                   <div><p>Username</p><input type="text" placeholder=" Your Username" value={username} onChange={(e) => setUsername(e.target.value)}/></div>
-                   <div><p>First Name</p><input type="text" placeholder="First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)}/></div>
-                   <div><p>Last Name</p><input type="text" placeholder=" Last Name " value={lastName} onChange={(e) => setLastName(e.target.value)}/></div>
-                   <div><p>email</p><input type="text" placeholder=" email " value={email} onChange={(e) => setEmail(e.target.value)}/></div>
-                   <div><p>Password</p><input type="text" placeholder=" Password" value={password} onChange={(e) => setPassword(e.target.value)}/> </div>
-                   <Link to="/login"onClick={async()=>{
-                    await axios.post("http://localhost:3001/second-brain/sign-up",{
+            <div className="bg-secondary font-mono h-screen w-screen flex justify-center items-center">
+                <div className=" bg-white border-2 rounded-xl h-auto w-80 p-6 flex flex-col items-center justify-evenly space-y-3">
+                   <div className="flex flex-col ">
+                    <Inputbox type="text" placeholder="username..." label="Username" onChange={setUsername}/>
+                   </div>
+                   <div className="flex flex-col "> 
+                    <Inputbox type="text" placeholder="first Name..." label="First Name" onChange={setFirstName}/>
+                   </div>
+                   <div className="flex flex-col ">
+                    <Inputbox type="text" placeholder="last Name..." label="Last Name" onChange={setLastName}/>
+                   </div>
+                   <div className="flex flex-col ">
+                    <Inputbox type="email" placeholder="email..." label="Email" onChange={setEmail}/>
+                   </div>
+                   <div className="flex flex-col ">
+                    <Inputbox type="password" placeholder="password..." label="Password" onChange={setPassword}/>
+                   </div>
+                   <button className="bg-secondary px-6 py-2 rounded-xl" onClick={async()=>{
+                    await axios.post(`${BACKEND_URL}/second-brain/sign-up`,{
                         username,
                         firstName,
                         lastName,
@@ -32,8 +42,8 @@ export function Signuppage(){
                         email
                     });
                     navigate("/login")
-                   }}> sign up </Link>
-                   <p>already have an account ?<Link to='/login'>login</Link></p>
+                   }}> Sign up </button>
+                   <p>already have an account ?<Link className="underline underline-offset-4" to='/login'>login</Link></p>
                </div>
             </div>
     )

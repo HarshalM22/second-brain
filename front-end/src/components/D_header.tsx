@@ -1,11 +1,12 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
+import { BACKEND_URL } from "../../config";
 export function D_header() {
     const [id, setId] = useState();
 
     useEffect(() => {
         async function data() {
-            const response = await axios.get("http://localhost:3001/me", {
+            const response = await axios.get(`${BACKEND_URL}/me`, {
                 headers: {
                     token: localStorage.getItem('token')
                 }
@@ -20,7 +21,7 @@ export function D_header() {
 
 
     return (
-        <div className="bg-black w-full h-16 bg-secondary stroke-black drop-shadow-lg text-white flex items-center justify-between" >
+        <div className=" w-full h-16 bg-secondary stroke-black drop-shadow-lg text-white flex items-center justify-between" >
             <span className="m-12">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-8">
                     <path fillRule="evenodd" d="M3 6.75A.75.75 0 0 1 3.75 6h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 6.75ZM3 12a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 12Zm0 5.25a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75a.75.75 0 0 1-.75-.75Z" clipRule="evenodd" />

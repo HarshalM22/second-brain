@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 
 import { Contentcard } from "./Contentcard";
 import { Card } from "./Card";
+import { BACKEND_URL } from "../../config";
 
 interface Props {
     title : string , 
@@ -19,7 +20,7 @@ export function D_body(){
         if(shouldUpdate){
          async function fetchData(){
                
-                const response = await axios.get("http://localhost:3001/me",{
+                const response = await axios.get(`${BACKEND_URL}/me`,{
                     headers :{
                         token : localStorage.getItem('token')
                     }
@@ -35,17 +36,17 @@ export function D_body(){
        
 
         return(
-            <div className=" h-screen w-full bg-gradient-to-r from-primary to-secondary flex flex-col">
+            <div className="min-h-dvh  w-full bg-gradient-to-r from-primary to-secondary flex flex-row  justify-center">
                 
-                <div className=" grid grid-rows-3">
+                <div className=" h-4/5 w-4/5 grid grid-cols-4 justify-center mt-10 gap-4">
                     <Card setShouldUpdate={setShouldUpdate}/> 
                
-                     <div className = " flex justify-evenly flex-wrap">
+                    
                         {data.map((element : Props)=>{
                             return(
                                 <Contentcard key={element.id} title={element.title} description={element.description} link={element.link} />
                             )})}
-                     </div>
+                
                 </div> 
 
            </div>

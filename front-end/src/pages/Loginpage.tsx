@@ -1,40 +1,47 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-export function Loginpage(){
-    const navigate = useNavigate() ;
-    const[username,setUsername] = useState("");
-    const[email,setEmail] = useState("");
-    const[password,setPassword] = useState("");
-   
-       
-       
+import { Inputbox } from "../components/Inputbox";
+import { BACKEND_URL } from "../../config";
+export function Loginpage() {
+    const navigate = useNavigate();
+    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+
     return (
-        <div className="h-screen w-screen flex justify-center items-center">
-        <div className="h-80 w-80 bg-sky-400 flex flex-col items-center justify-center">
-            <p>username</p><input type="text" placeholder="username" onChange={(e)=>{setUsername(e.target.value)}}/> 
-            <p>email</p><input type="email" placeholder="email" onChange={(e)=>{setEmail(e.target.value)}}/> 
-            <p>password</p><input type="password" placeholder="password" onChange={(e)=>{setPassword(e.target.value)}}/>
-            <button onClick={ 
-                async()=>{
-                    try{
-                        const response = await axios.post("http://localhost:3001/second-brain/login",{
-                           username,
-                           email,
-                           password 
-                        }) 
-                        const token = response.data.token ;
-                        localStorage.setItem('token',token);
+        <div className="bg-secondary font-mono h-screen w-screen flex justify-center items-center">
+            <div className=" bg-white border-2 rounded-xl h-80 w-80 flex flex-col items-center justify-evenly">
+                <div className="flex flex-col ">
+                    <Inputbox type="text" placeholder="username..." label="Username" onChange={setUsername} />
+                </div>
+                <div className="flex flex-col ">
+                    <Inputbox type="email" placeholder="email..." label="Email" onChange={setEmail} />
+                </div>
+                <div className="flex flex-col ">
+                    <Inputbox type="password" placeholder="password..." label="Password" onChange={setPassword} />
+                </div>
+                <button className="bg-secondary px-6 py-3 rounded-xl" onClick={
+                    async () => {
+                        try {
+                            const response = await axios.post(`${BACKEND_URL}/second-brain/login`, {
+                                username,
+                                email,
+                                password
+                            })
+                            const token = response.data.token;
+                            localStorage.setItem('token', token);
 
-                        navigate('/dashboard')
+                            navigate('/dashboard')
 
 
-                    }catch(e){
-                        console.log(`error in login ${e}`);
+                        } catch (e) {
+                            console.log(`error in login ${e}`);
+                        }
                     }
-                }
-            }>login</button> 
-        </div>
+                }>login</button>
+            </div>
         </div>
     )
 }
