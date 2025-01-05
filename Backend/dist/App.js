@@ -62,21 +62,21 @@ app.post("/second-brain/login", (req, res) => __awaiter(void 0, void 0, void 0, 
         });
         if (find) {
             const token = jsonwebtoken_1.default.sign({
-                userId: find.id
+                userId: find.id,
             }, JWT_SECRET);
             res.json({
-                token: token
+                token: token,
             });
         }
         else {
             res.json({
-                message: "user not found "
+                message: "user not found ",
             });
         }
     }
     catch (e) {
         res.json({
-            message: e
+            message: e,
         });
     }
 }));
@@ -92,7 +92,7 @@ function auth(req, res, next) {
     }
     else {
         res.json({
-            MESSAGE: "YOU ARE LOGGED IN "
+            MESSAGE: "YOU ARE LOGGED IN ",
         });
     }
 }
@@ -103,20 +103,21 @@ app.get("/me", auth, function (req, res) {
         try {
             const find = yield prisma.content.findMany({
                 where: {
-                    userId: userId
-                }
+                    userId: userId,
+                },
             });
             console.log(find);
             if (find) {
                 res.json({
                     find,
-                    userId: userId
+                    userId: userId,
                 });
             }
         }
         catch (e) {
             res.json({
-                msg: "error", e
+                msg: "error",
+                e,
             });
         }
     });
@@ -128,8 +129,8 @@ app.post("/second-brain/create-post", auth, function (req, res) {
         try {
             const user = yield prisma.user.findUnique({
                 where: {
-                    id: userId
-                }
+                    id: userId,
+                },
             });
             if (user) {
                 const content = yield prisma.content.create({
@@ -137,11 +138,10 @@ app.post("/second-brain/create-post", auth, function (req, res) {
                         title: title,
                         description: description,
                         link: link,
-                        userId: userId
-                    }
+                        userId: userId,
+                    },
                 });
             }
-            ;
             res.json({
                 message: " content is uplaoded",
             });
@@ -155,5 +155,26 @@ app.post("/second-brain/create-post", auth, function (req, res) {
     });
 });
 // @ts-ignore
-const port = 3001;
+app.get("/userinfo", auth, function (req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const userId = req.body.userId;
+        try {
+            const user = yield prisma.user.findUnique({
+                where: {
+                    id: userId,
+                },
+            });
+            res.json({
+                user
+            });
+        }
+        catch (e) {
+            res.json({
+                message: "error",
+                e
+            });
+        }
+    });
+});
+const port = 3000;
 app.listen(port);

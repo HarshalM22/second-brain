@@ -6,9 +6,6 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 import cors from "cors";
 
-
-
-
 app.use(cors());
 app.use(express.json());
 
@@ -59,93 +56,90 @@ app.post("/second-brain/login", async (req, res) => {
     if (find) {
       const token = jwt.sign(
         {
-          userId: find.id
+          userId: find.id,
         },
         JWT_SECRET
-      )
+      );
       res.json({
-        token: token
+        token: token,
       });
     } else {
       res.json({
-        message: "user not found "
-      })}
-  } 
-  catch (e) {
+        message: "user not found ",
+      });
+    }
+  } catch (e) {
     res.json({
-      message: e
+      message: e,
     });
   }
 });
 //  @ts-ignore
-function auth (req,res,next){
-  const token = req.headers.token ;
+function auth(req, res, next) {
+  const token = req.headers.token;
   console.log(token);
 
-  const tokenInfo  = jwt.verify(token,JWT_SECRET) ;
-  const jwtPayload = tokenInfo as JwtPayload
-  if(jwtPayload.userId){
-    req.body.userId =  jwtPayload.userId  
+  const tokenInfo = jwt.verify(token, JWT_SECRET);
+  const jwtPayload = tokenInfo as JwtPayload;
+  if (jwtPayload.userId) {
+    req.body.userId = jwtPayload.userId;
     next();
-  }else{
+  } else {
     res.json({
-      MESSAGE : "YOU ARE LOGGED IN "
-    }) ;
+      MESSAGE: "YOU ARE LOGGED IN ",
+    });
   }
 }
 //@ts-ignore
-app.get("/me",auth,async function(req,res){
-     const userId = req.body.userId ;
+app.get("/me", auth, async function (req, res) {
+  const userId = req.body.userId;
 
-     try{
-      const find = await prisma.content.findMany({
-        where:{
-          userId : userId
-        }
-      })
-      console.log(find)
-      if(find){
-        res.json({
-          find ,
-          userId : userId 
-        })
-      }
-
-      
-     }catch(e){
+  try {
+    const find = await prisma.content.findMany({
+      where: {
+        userId: userId,
+      },
+    });
+    console.log(find);
+    if (find) {
       res.json({
-        msg : "error",e 
-      })
-     }
-
-     
-})
-
+        find,
+        userId: userId,
+      });
+    }
+  } catch (e) {
+    res.json({
+      msg: "error",
+      e,
+    });
+  }
+});
 
 // @ts-ignore
 
-app.post("/second-brain/create-post",auth, async function (req, res) {
-  const { title, description, link ,userId} = req.body;
-  
+app.post("/second-brain/create-post", auth, async function (req, res) {
+  const { title, description, link, userId } = req.body;
+
   try {
     const user = await prisma.user.findUnique({
       where: {
-        id : userId
-      }
-    }) 
+        id: userId,
+      },
+    });
     if (user) {
       const content = await prisma.content.create({
         data: {
           title: title,
           description: description,
           link: link,
-          userId: userId
-        }}) 
-      };
-      res.json({
-        message: " content is uplaoded",
+          userId: userId,
+        },
       });
-    } catch (e) {
+    }
+    res.json({
+      message: " content is uplaoded",
+    });
+  } catch (e) {
     res.json({
       message: "app.ts issue",
       error: e,
@@ -154,7 +148,24 @@ app.post("/second-brain/create-post",auth, async function (req, res) {
 });
 
 // @ts-ignore
+app.get("/userinfo", auth, async function (req, res) {
+  const userId = req.body.userId;
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+    res.json({
+     user
+    });
+  } catch (e) {
+    res.json({
+      message: "error",
+      e
+    });
+  }
+});
 
-
-const port = 3001;
+const port = 3000;
 app.listen(port);
