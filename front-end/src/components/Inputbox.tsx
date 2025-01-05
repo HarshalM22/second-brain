@@ -8,7 +8,7 @@ export function Inputbox(props: props) {
     return (
         <>
             <label>{props.label}</label>
-            <input type={props.type} placeholder={props.placeholder} onChange={(e) => { props.onChange(e.target.value) }} />
+            <input className="rounded-sm " type={props.type} placeholder={props.placeholder} onChange={(e) => { props.onChange(e.target.value) }} />
         </>
     )
 }
