@@ -11,4 +11,4 @@ export function Inputbox(props: props) {
             <input className="rounded-sm " type={props.type} placeholder={props.placeholder} onChange={(e) => { props.onChange(e.target.value) }} />
         </>
     )
-}
+}  

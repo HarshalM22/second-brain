@@ -44,7 +44,7 @@ export function D_body() {
 
                 {data.map((element: Props) => {
                     return (
-                        <Contentcard key={element.id} title={element.title} description={element.description} link={element.link} />
+                        <Contentcard key={element.id} title={element.title} description={element.description} link={element.link} setShouldUpdate={setShouldUpdate}  />
                     )
                 })}
 
