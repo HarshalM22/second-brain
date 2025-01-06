@@ -5,7 +5,7 @@ const JWT_SECRET = "harshal";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 import cors from "cors";
-
+import { auth } from "./middleware";
 app.use(cors());
 app.use(express.json());
 
@@ -74,23 +74,7 @@ app.post("/second-brain/login", async (req, res) => {
     });
   }
 });
-//  @ts-ignore
-function auth(req, res, next) {
-  const token = req.headers.token;
-  console.log(token);
 
-  const tokenInfo = jwt.verify(token, JWT_SECRET);
-  const jwtPayload = tokenInfo as JwtPayload;
-  if (jwtPayload.userId) {
-    req.body.userId = jwtPayload.userId;
-    next();
-  } else {
-    res.json({
-      MESSAGE: "YOU ARE LOGGED IN ",
-    });
-  }
-}
-//@ts-ignore
 app.get("/me", auth, async function (req, res) {
   const userId = req.body.userId;
 
@@ -165,6 +149,40 @@ app.get("/userinfo", auth, async function (req, res) {
       e
     });
   }
+});
+
+app.delete("/second-brain/delete-post", auth, async function (req, res) {
+  const { userId } = req.body;
+  const title = req.body.title;
+  try {
+
+    const find = await prisma.content.findFirst({
+      where: {
+        title: title,
+        userId: userId
+      }
+    })
+    const deletePost = await prisma.content.delete({
+      where:{
+        id:find?.id 
+      }
+    })
+    const findAfterDelete = await prisma.content.findMany({
+      where :{
+        userId:userId
+      }
+    })
+    res.json({
+      message: "post deleted",
+      findAfterDelete
+    });
+  } catch (e) {
+    res.json({
+      message: "error",
+      e
+    });
+  }
+
 });
 
 const port = 3000;

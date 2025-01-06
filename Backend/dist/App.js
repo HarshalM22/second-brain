@@ -19,6 +19,7 @@ const JWT_SECRET = "harshal";
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const cors_1 = __importDefault(require("cors"));
+const middleware_1 = require("./middleware");
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 // @ts-ignore
@@ -80,24 +81,7 @@ app.post("/second-brain/login", (req, res) => __awaiter(void 0, void 0, void 0, 
         });
     }
 }));
-//  @ts-ignore
-function auth(req, res, next) {
-    const token = req.headers.token;
-    console.log(token);
-    const tokenInfo = jsonwebtoken_1.default.verify(token, JWT_SECRET);
-    const jwtPayload = tokenInfo;
-    if (jwtPayload.userId) {
-        req.body.userId = jwtPayload.userId;
-        next();
-    }
-    else {
-        res.json({
-            MESSAGE: "YOU ARE LOGGED IN ",
-        });
-    }
-}
-//@ts-ignore
-app.get("/me", auth, function (req, res) {
+app.get("/me", middleware_1.auth, function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const userId = req.body.userId;
         try {
@@ -123,7 +107,7 @@ app.get("/me", auth, function (req, res) {
     });
 });
 // @ts-ignore
-app.post("/second-brain/create-post", auth, function (req, res) {
+app.post("/second-brain/create-post", middleware_1.auth, function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { title, description, link, userId } = req.body;
         try {
@@ -155,7 +139,7 @@ app.post("/second-brain/create-post", auth, function (req, res) {
     });
 });
 // @ts-ignore
-app.get("/userinfo", auth, function (req, res) {
+app.get("/userinfo", middleware_1.auth, function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const userId = req.body.userId;
         try {
@@ -166,6 +150,40 @@ app.get("/userinfo", auth, function (req, res) {
             });
             res.json({
                 user
+            });
+        }
+        catch (e) {
+            res.json({
+                message: "error",
+                e
+            });
+        }
+    });
+});
+app.delete("/second-brain/delete-post", middleware_1.auth, function (req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { userId } = req.body;
+        const title = req.body.title;
+        try {
+            const find = yield prisma.content.findMany({
+                where: {
+                    title: title,
+                    userId: userId
+                }
+            });
+            const deletePost = yield prisma.content.delete({
+                where: {
+                    id: find[0].id
+                }
+            });
+            const findAfterDelete = yield prisma.content.findMany({
+                where: {
+                    userId: userId
+                }
+            });
+            res.json({
+                message: "post deleted",
+                findAfterDelete
             });
         }
         catch (e) {
