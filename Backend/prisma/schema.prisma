@@ -16,19 +16,32 @@ datasource db {
 model User {
   id             Int       @id     @default(autoincrement()) 
   username       String    @unique
-  firstName      String 
-  lastName       String 
   email          String 
   password       String   
   content        Content[]
+  links          Link[]
 }
 
 model Content{
   id             Int       @id    @default(autoincrement())
   title          String 
-  description    String
-  done           Boolean?
+  type           String? 
   link           String 
-  userId         Int 
+  tags           Tag[]
+  userId         Int
   user           User   @relation(fields: [userId] ,references: [id]  )
+} 
+
+model Tag{
+  id             Int       @id    @default(autoincrement())
+  title           String
+  contentId       Int
+  content         Content @relation(fields: [contentId], references: [id])
+}
+
+model Link{
+  id             Int       @id    @default(autoincrement())
+  hash           String    @unique
+  userId          Int 
+  user            User   @relation(fields: [userId], references: [id])
 } 

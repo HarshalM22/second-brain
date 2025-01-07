@@ -20,20 +20,19 @@ const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const cors_1 = __importDefault(require("cors"));
 const middleware_1 = require("./middleware");
+const utils_1 = require("./utils");
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 // @ts-ignore
-app.post("/second-brain/sign-up", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { firstName, lastName, email, password, username } = req.body;
-    if (!firstName || !lastName || !email || !password || !username) {
+app.post("/api/v1/second-brain/sign-up", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, password, username } = req.body;
+    if (!email || !password || !username) {
         return res.status(400).json({ error: "All fields are required." });
     }
     try {
         const user = yield prisma.user.create({
             data: {
                 username: username,
-                firstName: firstName,
-                lastName: lastName,
                 email: email,
                 password: password,
             },
@@ -49,16 +48,13 @@ app.post("/second-brain/sign-up", (req, res) => __awaiter(void 0, void 0, void 0
         });
     }
 }));
-app.post("/second-brain/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const username = req.body.username;
-    const password = req.body.password;
-    const email = req.body.email;
+app.post("/api/v1/second-brain/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { password, username } = req.body;
     try {
         const find = yield prisma.user.findUnique({
             where: {
                 username: username,
                 password: password,
-                email: email,
             },
         });
         if (find) {
@@ -81,20 +77,24 @@ app.post("/second-brain/login", (req, res) => __awaiter(void 0, void 0, void 0, 
         });
     }
 }));
-app.get("/me", middleware_1.auth, function (req, res) {
+app.get("/api/v1/second-brain/me", middleware_1.auth, function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const userId = req.body.userId;
         try {
-            const find = yield prisma.content.findMany({
+            const constent = yield prisma.content.findMany({
                 where: {
                     userId: userId,
                 },
             });
-            console.log(find);
-            if (find) {
+            const user = yield prisma.user.findUnique({
+                where: {
+                    id: userId,
+                },
+            });
+            if (constent) {
                 res.json({
-                    find,
-                    userId: userId,
+                    constent: constent,
+                    user: user,
                 });
             }
         }
@@ -107,9 +107,9 @@ app.get("/me", middleware_1.auth, function (req, res) {
     });
 });
 // @ts-ignore
-app.post("/second-brain/create-post", middleware_1.auth, function (req, res) {
+app.post("/api/v1/second-brain/create-post", middleware_1.auth, function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { title, description, link, userId } = req.body;
+        const { title, link, userId, type } = req.body;
         try {
             const user = yield prisma.user.findUnique({
                 where: {
@@ -120,7 +120,7 @@ app.post("/second-brain/create-post", middleware_1.auth, function (req, res) {
                 const content = yield prisma.content.create({
                     data: {
                         title: title,
-                        description: description,
+                        type: type,
                         link: link,
                         userId: userId,
                     },
@@ -138,60 +138,109 @@ app.post("/second-brain/create-post", middleware_1.auth, function (req, res) {
         }
     });
 });
-// @ts-ignore
-app.get("/userinfo", middleware_1.auth, function (req, res) {
+app.get("/api/v1/second-brain/posts", middleware_1.auth, function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const userId = req.body.userId;
+        const { userId } = req.body;
+        const posts = yield prisma.content.findMany({
+            where: {
+                userId: userId
+            }
+        });
+        res.json({
+            posts
+        });
+    });
+});
+// @ts-ignore
+app.delete("/api/v1/second-brain/delete-post", middleware_1.auth, function (req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { userId, title } = req.body;
         try {
-            const user = yield prisma.user.findUnique({
+            const find = yield prisma.content.findFirst({
                 where: {
-                    id: userId,
+                    title: title,
+                    userId: userId,
+                },
+            });
+            if (find) {
+                const deletePost = yield prisma.content.delete({
+                    where: {
+                        id: find === null || find === void 0 ? void 0 : find.id,
+                    },
+                });
+            }
+            else {
+                console.log("post not found");
+            }
+            const findAfterDelete = yield prisma.content.findMany({
+                where: {
+                    userId: userId,
                 },
             });
             res.json({
-                user
+                message: "post deleted",
+                findAfterDelete,
             });
         }
         catch (e) {
             res.json({
                 message: "error",
-                e
+                e,
             });
         }
     });
 });
-app.delete("/second-brain/delete-post", middleware_1.auth, function (req, res) {
+app.post("/api/v1/second-brain/share", middleware_1.auth, function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { userId } = req.body;
-        const title = req.body.title;
-        try {
-            const find = yield prisma.content.findMany({
-                where: {
-                    title: title,
-                    userId: userId
-                }
-            });
-            const deletePost = yield prisma.content.delete({
-                where: {
-                    id: find[0].id
-                }
-            });
-            const findAfterDelete = yield prisma.content.findMany({
-                where: {
-                    userId: userId
-                }
-            });
-            res.json({
-                message: "post deleted",
-                findAfterDelete
+        const share = req.body.share;
+        if (share) {
+            yield prisma.link.create({
+                data: {
+                    userId: req.body.userId,
+                    hash: (0, utils_1.random)(10),
+                },
             });
         }
-        catch (e) {
-            res.json({
-                message: "error",
-                e
+        else {
+            yield prisma.link.deleteMany({
+                where: {
+                    userId: req.body.userId,
+                },
             });
         }
+        res.json({
+            message: "updated sharable link",
+        });
+    });
+});
+app.get("/api/v1/brain/:shareLink", function (req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const hash = req.params.shareLink;
+        const link = yield prisma.link.findUnique({
+            where: {
+                hash
+            }
+        });
+        if (!link) {
+            res.status(411).json({
+                message: "Sorry incorrect input"
+            });
+            return;
+        }
+        const content = yield prisma.content.findFirst({
+            where: {
+                userId: link.userId
+            }
+        });
+        const user = yield prisma.user.findUnique({
+            where: {
+                id: link.userId
+            }
+        });
+        res.json({
+            username: user === null || user === void 0 ? void 0 : user.username,
+            content: content
+        });
     });
 });
 const port = 3000;
