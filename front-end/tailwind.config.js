@@ -6,17 +6,11 @@ export default {
   ],
   theme: {
     colors :{
-      'primary': '#661F71',
-      'secondary': '#D3BED5',
-      'beige' : '#FFF0DB',
+      'primary': '#1d4ed8',
+      'secondary': '#60a5fa',
       'white' : '#FFF',
       'black' : '#000',
-    },
-    fontFamily: {
-      'sans': ['Roboto', 'sans-serif'],
-      'serif': ['Merriweather', 'serif'],
-      'mono': ['Inconsolata', 'monospace'],
-      'asap' : ['', 'sans-serif']
+      'slate-200' : '#f1f5f9', 
     },
     extend: {
       backgroundImage:{

@@ -1,47 +1,26 @@
-import {  useState } from "react";
-import axios from "axios";
-import {BACKEND_URL} from "../../config";
-import { Inputbox } from "./Inputbox";
-interface Cardprops {
-    setShouldUpdate: (value: boolean) => void;
+import { Share } from "../icons/Share";
+
+
+interface CardProps{
+    title : string
+    type : "youtube" | "twitter"
+    link :string
 }
+export function Card({title,type,link}:CardProps){
+
+    return(
+    <div className="h-auto ml-8 mt-8 p-4 max-w-80 bg-white rounded-md shadow-md border-slate-200 border">
+        <div className="flex justify-between ">
+        <div className="w-4/5 flex justify-center">{title}</div>
+        <div className="w-1/5 flex justify-end"><Share/></div>
+        </div>   
 
 
-export function Card({setShouldUpdate}: Cardprops){
-    const [title, setTitle] = useState("");
-    const [description, setDesc] = useState("");
-    const [link, setLink] = useState("");
-  
+        <div>
+            {type === "youtube" && <iframe className="w-full rounded-lg pt-5" src={link.replace("watch","embed")} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>}
 
-    async function createContent() {
-        try {
-            await axios.post(`${BACKEND_URL}/second-brain/create-post`, {
-                title,
-                description,
-                link,
-            },
-                {
-                    headers: {
-                        token: localStorage.getItem("token"),
-                    },
-                }
-            );
-            setShouldUpdate(true);
-        
-        } catch (error) {
-            console.error("login failed", error);
-        }
-    }
-
-    return (
-        <div className="bg-slate-200 w-56 h-80 border-2 rounded-2xl  flex flex-col items-center ">
-            <div className="h-1/3 flex items-center "> Image </div>
-            <div className=" h-2/3 flex flex-col items-center justify-evenly">
-                <Inputbox type="text" placeholder=" Title"  onChange={setTitle} />
-                <Inputbox type="text" placeholder=" Description"  onChange={setDesc} />
-                <Inputbox type="text" placeholder=" Link"  onChange={setLink} />
-                <button onClick={createContent} className="text-black bg-secondary rounded-md px-5 py-1 hover:bg-white ease-in duration-200 ">Create </button>
-            </div>
-        </div>
-    );
+            {type === "twitter" && <blockquote className="twitter-tweet"><a href={link.replace("x.com","twitter.com")}></a></blockquote>}
+        </div> 
+    </div>
+    )
 }
