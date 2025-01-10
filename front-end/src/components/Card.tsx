@@ -3,8 +3,8 @@ import { Share } from "../icons/Share";
 
 interface CardProps{
     title : string
-    type : "youtube" | "twitter"
-    link :string
+    type : "youtube" | "twitter" | string
+    link :string 
 }
 export function Card({title,type,link}:CardProps){
 

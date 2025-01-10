@@ -25,7 +25,7 @@ export function Loginpage() {
                 <button className="bg-secondary px-6 py-3 rounded-xl" onClick={
                     async () => {
                         try {
-                            const response = await axios.post(`${BACKEND_URL}/second-brain/login`, {
+                            const response = await axios.post(`${BACKEND_URL}/api/v1/second-brain/login`, {
                                 username,
                                 email,
                                 password

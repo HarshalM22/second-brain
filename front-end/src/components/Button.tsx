@@ -4,6 +4,7 @@ interface ButtonProps{
    variant : "primary" | "secondary" 
    text : string 
    startIcon : ReactElement
+   onClick? :()=>void
 }
 
 const varientClasses = {
@@ -12,7 +13,7 @@ const varientClasses = {
 }
 
 const defaultStyles = "px-4 py-2 rounded-md font-normal text-lg flex items-center gap-2";
-export function Button({variant,text,startIcon}: ButtonProps){
+export function Button({variant,text,startIcon,onClick}: ButtonProps){
 
-    return <button className={varientClasses[variant] + " "+ defaultStyles} >{startIcon}{text}</button>
+    return <button onClick={onClick} className={varientClasses[variant] + " "+ defaultStyles} >{startIcon}{text}</button>
 }

@@ -34,7 +34,7 @@ export function Signuppage(){
                     <Inputbox type="password" placeholder="password..." label="Password" onChange={setPassword}/>
                    </div>
                    <button className="bg-secondary px-6 py-2 rounded-xl" onClick={async()=>{
-                    await axios.post(`${BACKEND_URL}/second-brain/sign-up`,{
+                    await axios.post(`${BACKEND_URL}/api/v1/second-brain/sign-up`,{
                         username,
                         firstName,
                         lastName,
