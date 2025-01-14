@@ -1,16 +1,18 @@
 // import { Button } from "./Button";
 
-import { useState } from "react";
+import { useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Inputbox } from "../components/Inputbox";
 import { BACKEND_URL } from "../../config";
 export function Signuppage(){
-    const [username,setUsername] = useState("");
-    const [firstName,setFirstName] = useState("");
-    const [lastName,setLastName] = useState("");
-    const [password,setPassword] = useState("");
-    const [email,setEmail] = useState("");
+
+    const usernameref = useRef()
+    const firstnameref = useRef()
+    const lastnameref = useRef()
+    const emailref = useRef()
+    const passwordref = useRef()
+    
     const navigate = useNavigate();
     
    
@@ -19,27 +21,27 @@ export function Signuppage(){
             <div className="bg-secondary font-mono h-screen w-screen flex justify-center items-center">
                 <div className=" bg-white border-2 rounded-xl h-auto w-80 p-6 flex flex-col items-center justify-evenly space-y-3">
                    <div className="flex flex-col ">
-                    <Inputbox type="text" placeholder="username..." label="Username" onChange={setUsername}/>
+                    <Inputbox type="text" placeholder="username..." label="Username" referance={usernameref}/>
                    </div>
                    <div className="flex flex-col "> 
-                    <Inputbox type="text" placeholder="first Name..." label="First Name" onChange={setFirstName}/>
+                    <Inputbox type="text" placeholder="first Name..." label="First Name" referance={firstnameref}/>
                    </div>
                    <div className="flex flex-col ">
-                    <Inputbox type="text" placeholder="last Name..." label="Last Name" onChange={setLastName}/>
+                    <Inputbox type="text" placeholder="last Name..." label="Last Name" referance={lastnameref}/>
                    </div>
                    <div className="flex flex-col ">
-                    <Inputbox type="email" placeholder="email..." label="Email" onChange={setEmail}/>
+                    <Inputbox type="email" placeholder="email..." label="Email" referance={emailref}/>
                    </div>
                    <div className="flex flex-col ">
-                    <Inputbox type="password" placeholder="password..." label="Password" onChange={setPassword}/>
+                    <Inputbox type="password" placeholder="password..." label="Password" referance={passwordref}/>
                    </div>
                    <button className="bg-secondary px-6 py-2 rounded-xl" onClick={async()=>{
                     await axios.post(`${BACKEND_URL}/api/v1/second-brain/sign-up`,{
-                        username,
-                        firstName,
-                        lastName,
-                        password,
-                        email
+                        username: usernameref.current?.value ,
+                        firstName: firstnameref.current?.value,
+                        lastName : lastnameref.current?.value,
+                        password : passwordref.current?.value,
+                        email: emailref.current?.value
                     });
                     navigate("/login")
                    }}> Sign up </button>

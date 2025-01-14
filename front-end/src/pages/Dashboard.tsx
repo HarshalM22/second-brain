@@ -19,6 +19,7 @@ interface Props{
 export function Dashboard() {
     const [posts,setPosts] = useState([]);
     const [createPost , setCreatePost ] = useState(false) ;
+    const [shouldUpdate,setShouldUpdate] = useState( false);
 
     useEffect(()=>{
         axios.get(`${BACKEND_URL}/api/v1/second-brain/posts`,{
@@ -26,16 +27,18 @@ export function Dashboard() {
                 token : localStorage.getItem('token')
             }
         }).then(Response=>setPosts(Response.data.posts))
-        console.log(posts);
-    },[])
+    },[shouldUpdate])
+    
+
+    
     
     
 
  return (  
     <div className="flex"> 
-    <CreateContent open ={createPost} onClose={()=>setCreatePost(false)}/> 
+    <CreateContent open ={createPost} onClose={()=>setCreatePost(false)} Update={()=>setShouldUpdate(true)}/> 
         <Sidebar/>
-        <div className="h-dvh bg-slate-100 flex-grow bg-slate-200">
+        <div className="h-vh w-dvw bg-slate-100 flex-grow bg-slate-200">
             <div className="h-24 bg-slate-200 flex">
                 <div className="w-2/4 font-sans font-extrabold from-neutral-900 text-2xl pl-16 pt-12"> ALL NOTES </div>
                 <div className="w-2/4 pl-16 pt-12 flex gap-9 justify-center">
@@ -44,8 +47,6 @@ export function Dashboard() {
                 </div>
             </div>
             <div className="flex flex-wrap gap-8 flex-grow ">
-                <Card title="youtube video" type="youtube" link="https://www.youtube.com/embed/0HyIda5eub8?si=CRlLTKPYD7jG2Ydv" />
-                <Card title="first tweet" type="twitter" link="https://x.com/VanshBaghel07/status/1876920106812375447" />
                 {posts.map((element:Props)=>{
                     return (
                     <Card key={element.id} title={element.title} type={element.type} link={element.link} />

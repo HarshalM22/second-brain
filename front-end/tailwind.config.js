@@ -10,11 +10,12 @@ export default {
       'secondary': '#60a5fa',
       'white' : '#FFF',
       'black' : '#000',
-      'slate-200' : '#f1f5f9', 
+      'slate-200' : '#f1f5f9',
+      'gray' : 'rgb(0,0,0,0.5)'
     },
     extend: {
       backgroundImage:{
-        bannerImg : "url('./brain_google.svg')"
+        bannerImg : "url('./public/brain_google.svg')"
       }
     },
   },

@@ -17,10 +17,14 @@ export function Card({title,type,link}:CardProps){
 
 
         <div>
-            {type === "youtube" && <iframe className="w-full rounded-lg pt-5" src={link.replace("watch","embed")} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>}
+            {type === "youtube" && <iframe className="w-full rounded-lg pt-5" src={link.replace("watch","embed")} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>}
 
             {type === "twitter" && <blockquote className="twitter-tweet"><a href={link.replace("x.com","twitter.com")}></a></blockquote>}
         </div> 
     </div>
     )
 }
+
+// https://www.youtube.com/watch?v=95oVEx87pVc
+
+// https://www.youtube.com/embed/95oVEx87pVc?si=L62IgUT61KkMxehX
