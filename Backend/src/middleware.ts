@@ -7,6 +7,7 @@ import { Request, Response, NextFunction } from "express";
 
 export function auth(req : Request, res:Response, next:NextFunction) {
   const {token} = req.headers;
+  
   const tokenInfo = jwt.verify(token as string , JWT_SECRET);
   const jwtPayload = tokenInfo as JwtPayload;
   if (jwtPayload.userId) {
