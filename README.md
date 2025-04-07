@@ -20,7 +20,7 @@ A **Second Brain** web app to capture, organize, and retrieve your ideas and kno
 
 - **Frontend**: React, Tailwind CSS, Context API
 - **Backend**: Node.js, Express
-- **Database**: MongoDB (via Mongoose)
+- **Database**: postgres sql
 - **Authentication**: JSON Web Tokens (JWT), bcrypt
 - **Others**: Markdown-it, dotenv
 
@@ -31,26 +31,26 @@ A **Second Brain** web app to capture, organize, and retrieve your ideas and kno
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/second-brain-app.git
+git clone https://github.com/HarshalM22/second-brain.git
 cd second-brain-app
 ```
 
 ### 2. Backend Setup
 
 ```bash
-cd server
+cd Backend
 npm install
-cp .env.example .env
-# Add your MongoDB URI and JWT_SECRET to .env
+
+# Add your Postgres URl and JWT_SECRET to .env
 npm run dev
 ```
 
 ### 3. Frontend Setup
 
 ```bash
-cd client
+cd Frontend
 npm install
-npm start
+npm run dev
 ```
 
 ---
@@ -58,9 +58,7 @@ npm start
 ## 🔐 Environment Variables (server/.env)
 
 ```env
-MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/secondbrain
-JWT_SECRET=your_jwt_secret_key
-PORT=5000
+Set Your Env variable 
 ```
 
 ---
@@ -69,50 +67,16 @@ PORT=5000
 
 ```bash
 # Backend
-cd server
-npm test
+cd Backend
+npm run dev
 
 # Frontend
-cd client
-npm test
+cd Frontend
+npm run dev
 ```
 
 ---
 
-## 📁 Folder Structure
 
-```
-second-brain-app/
-├── client/           # React frontend
-│   ├── public/
-│   └── src/
-│       ├── components/
-│       ├── pages/
-│       └── context/
-├── server/           # Node.js backend
-│   ├── controllers/
-│   ├── models/
-│   ├── routes/
-│   └── middleware/
-```
 
----
 
-## 🚀 Future Enhancements
-
-- AI-powered note suggestions
-- Graph view of linked notes
-- Mobile app version
-- Integration with Notion/Google Drive
-
----
-
-## 📄 License
-
-MIT License. See `LICENSE` file for details.
-
----
-
-## 👨‍💻 Author
-
-Made with ❤️ by [Your Name](https://github.com/yourusername)
