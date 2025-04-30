@@ -37,7 +37,7 @@ app.post("/api/v1/second-brain/sign-up", (req, res) => __awaiter(void 0, void 0,
                 password: password,
             },
         });
-        res.json({
+        res.status(200).json({
             message: "user has been sign up ",
         });
     }
@@ -61,7 +61,7 @@ app.post("/api/v1/second-brain/login", (req, res) => __awaiter(void 0, void 0, v
             const token = jsonwebtoken_1.default.sign({
                 userId: find.id,
             }, JWT_SECRET);
-            res.json({
+            res.status(200).json({
                 token: token,
             });
         }

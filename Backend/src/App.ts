@@ -27,7 +27,7 @@ app.post("/api/v1/second-brain/sign-up", async (req, res) => {
       },
     });
 
-    res.json({
+    res.status(200).json({
       message: "user has been sign up ",
     });
   } catch (e) {
@@ -56,7 +56,7 @@ app.post("/api/v1/second-brain/login", async (req, res) => {
         },
         JWT_SECRET
       );
-      res.json({
+      res.status(200).json({
         token: token,
       });
     } else {
