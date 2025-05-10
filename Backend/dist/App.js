@@ -21,62 +21,67 @@ const prisma = new client_1.PrismaClient();
 const cors_1 = __importDefault(require("cors"));
 const middleware_1 = require("./middleware");
 const utils_1 = require("./utils");
+const schema_1 = require("./schema");
+const bcrypt_1 = __importDefault(require("bcrypt"));
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 // @ts-ignore
-app.post("/api/v1/second-brain/sign-up", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, password, username } = req.body;
-    if (!email || !password || !username) {
-        return res.status(400).json({ error: "All fields are required." });
-    }
-    try {
-        const user = yield prisma.user.create({
-            data: {
-                username: username,
-                email: email,
-                password: password,
-            },
-        });
-        res.status(200).json({
-            message: "user has been sign up ",
-        });
-    }
-    catch (e) {
-        console.log(e);
-        res.json({
-            message: " error while signing up",
-        });
-    }
-}));
-app.post("/api/v1/second-brain/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { password, username } = req.body;
-    try {
-        const find = yield prisma.user.findUnique({
-            where: {
-                username: username,
-                password: password,
-            },
-        });
-        if (find) {
-            const token = jsonwebtoken_1.default.sign({
-                userId: find.id,
-            }, JWT_SECRET);
-            res.status(200).json({
-                token: token,
+app.post("/api/v1/second-brain/sign-up", function (req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const parseResult = schema_1.SignUpSchema.safeParse(req.body);
+        if (!parseResult.success) {
+            return res.status(400).json({
+                error: parseResult.error.format(),
             });
         }
-        else {
-            res.json({
-                message: "user not found ",
+        const { email, password, username } = parseResult.data;
+        try {
+            const hashedPassword = yield bcrypt_1.default.hash(password, 4); // saltRounds = 10
+            const user = yield prisma.user.create({
+                data: {
+                    username,
+                    email,
+                    password: hashedPassword,
+                },
+            });
+            res.status(200).json({ message: "User has been signed up." });
+        }
+        catch (e) {
+            console.log(e);
+            res.status(500).json({ message: "Error while signing up" });
+        }
+    });
+});
+// @ts-ignore
+app.post("/api/v1/second-brain/login", function (req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const parseResult = schema_1.LoginSchema.safeParse(req.body);
+        if (!parseResult.success) {
+            return res.status(400).json({
+                error: parseResult.error.format(),
             });
         }
-    }
-    catch (e) {
-        res.json({
-            message: e,
-        });
-    }
-}));
+        const { username, password } = parseResult.data;
+        try {
+            const user = yield prisma.user.findUnique({
+                where: { username },
+            });
+            if (!user) {
+                return res.status(401).json({ message: "User not found" });
+            }
+            const isPasswordValid = yield bcrypt_1.default.compare(password, user.password);
+            if (!isPasswordValid) {
+                return res.status(401).json({ message: "Invalid password" });
+            }
+            const token = jsonwebtoken_1.default.sign({ userId: user.id }, JWT_SECRET);
+            res.status(200).json({ token });
+        }
+        catch (e) {
+            console.log(e);
+            res.status(500).json({ message: "Server error" });
+        }
+    });
+});
 app.get("/api/v1/second-brain/me", middleware_1.auth, function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const userId = req.body.userId;
@@ -106,7 +111,6 @@ app.get("/api/v1/second-brain/me", middleware_1.auth, function (req, res) {
         }
     });
 });
-// @ts-ignore
 app.post("/api/v1/second-brain/create-post", middleware_1.auth, function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { title, link, userId, type } = req.body;
@@ -151,7 +155,6 @@ app.get("/api/v1/second-brain/posts", middleware_1.auth, function (req, res) {
         });
     });
 });
-// @ts-ignore
 app.delete("/api/v1/second-brain/delete-post", middleware_1.auth, function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { userId, id } = req.body;

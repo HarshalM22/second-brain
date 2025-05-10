@@ -7,70 +7,78 @@ const prisma = new PrismaClient();
 import cors from "cors";
 import { auth } from "./middleware";
 import { random } from "./utils";
+import { LoginSchema, SignUpSchema } from "./schema";
+import bcrypt from "bcrypt";
 app.use(cors());
 app.use(express.json());
 
-// @ts-ignore
-app.post("/api/v1/second-brain/sign-up", async (req, res) => {
-  const { email, password, username } = req.body;
 
-  if (!email || !password || !username) {
-    return res.status(400).json({ error: "All fields are required." });
+
+
+// @ts-ignore
+app.post("/api/v1/second-brain/sign-up", async function (req, res)  {
+  const parseResult = SignUpSchema.safeParse(req.body);
+
+  if (!parseResult.success) {
+    return res.status(400).json({
+      error: parseResult.error.format(),
+    });
   }
 
+  const { email, password, username } = parseResult.data;
+
   try {
+    const hashedPassword = await bcrypt.hash(password, 4); 
+
     const user = await prisma.user.create({
       data: {
-        username: username,
-        email: email,
-        password: password,
+        username,
+        email,
+        password: hashedPassword,
       },
     });
 
-    res.status(200).json({
-      message: "user has been sign up ",
-    });
+    res.status(200).json({ message: "User has been signed up." });
   } catch (e) {
     console.log(e);
-    res.json({
-      message: " error while signing up",
-    });
+    res.status(500).json({ message: "Error while signing up" });
   }
 });
 
-app.post("/api/v1/second-brain/login", async (req, res) => {
-  const { password, username } = req.body;
+// @ts-ignore
+app.post("/api/v1/second-brain/login", async function (req, res)  {
+  const parseResult = LoginSchema.safeParse(req.body);
+
+  if (!parseResult.success) {
+    return res.status(400).json({
+      error: parseResult.error.format(),
+    });
+  }
+
+  const { username, password } = parseResult.data;
 
   try {
-    const find = await prisma.user.findUnique({
-      where: {
-        username: username,
-        password: password,
-      },
+    const user = await prisma.user.findUnique({
+      where: { username },
     });
 
-    if (find) {
-      const token = jwt.sign(
-        {
-          userId: find.id,
-        },
-        JWT_SECRET
-      );
-      res.status(200).json({
-        token: token,
-      });
-    } else {
-      res.json({
-        message: "user not found ",
-      });
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
     }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: "Invalid password" });
+    }
+
+    const token = jwt.sign({ userId: user.id }, JWT_SECRET);
+    res.status(200).json({ token });
   } catch (e) {
-    res.json({
-      message: e,
-    });
+    console.log(e);
+    res.status(500).json({ message: "Server error" });
   }
 });
-
 app.get("/api/v1/second-brain/me", auth, async function (req, res) {
   const userId = req.body.userId;
 
@@ -99,7 +107,7 @@ app.get("/api/v1/second-brain/me", auth, async function (req, res) {
   }
 });
 
-// @ts-ignore
+
 
 app.post("/api/v1/second-brain/create-post", auth, async function (req, res) {
   const { title, link, userId, type } = req.body;
@@ -144,7 +152,7 @@ app.get("/api/v1/second-brain/posts",auth,async function(req,res){
 
 })
 
-// @ts-ignore
+
 app.delete("/api/v1/second-brain/delete-post", auth, async function (req, res) {
   const { userId, id } = req.body;
 
