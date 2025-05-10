@@ -155,7 +155,6 @@ app.get("/api/v1/second-brain/posts", middleware_1.auth, function (req, res) {
 app.delete("/api/v1/second-brain/delete-post", middleware_1.auth, function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { userId, id } = req.body;
-        console.log(userId, id);
         try {
             const deletedContent = yield prisma.content.delete({
                 where: {
