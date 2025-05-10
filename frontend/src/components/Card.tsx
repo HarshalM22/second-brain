@@ -1,13 +1,13 @@
-import { Share } from "../icons/Share";
+
 import { Trash, Youtube, Twitter, Instagram, Link as LinkIcon } from "lucide-react";
 import { ReactNode, useEffect, useRef } from "react";
 
 interface CardProps {
-  id: string | number;
+  id:  number;
   title: string;
   type: "youtube" | "twitter" | "instagram" | "link" | string;
   link: string;
-  onDelete: (id: string | number) => void;
+  onDelete: (id: number) => void;
   deleteLoading?: boolean;
 }
 
@@ -166,7 +166,7 @@ function extractTwitterID(url: string): string {
   return match ? match[1] : "";
 }
 
-// --- THE CARD COMPONENT WITH ALIGNED HEADER ---
+// --- THE CARD COMPONENT ---
 export function Card({ id, title, type, link, onDelete, deleteLoading = false }: CardProps) {
   return (
     <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 p-4 w-full h-[350px] overflow-hidden flex flex-col">
@@ -213,10 +213,3 @@ export function Card({ id, title, type, link, onDelete, deleteLoading = false }:
   );
 }
 
-// Add these types to your window object
-declare global {
-  interface Window {
-    twttr: any;
-    instgrm: any;
-  }
-}

@@ -37,7 +37,7 @@ export function Sidebar({ setActiveSection }: SidebarProps) {
       {/* Header */}
       <div className="h-20 font-bold flex justify-center items-center text-3xl gap-2">
         <Brain />
-        <span>Second Brain</span>
+        <span>Brainly</span>
       </div>
 
       {/* Sidebar Items */}

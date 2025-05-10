@@ -10,15 +10,16 @@ import { CreateContent } from "../components/CreateContent";
 interface Post {
   title: string;
   link: string;
-  type: "twitter" | "youtube" | "instagram" | "links" |string;
+  type: "twitter" | "youtube" | "instagram" | "links" | string;
   id: number;
 }
 
-const sectionToType: Record<string, string | undefined> = {
+const sectionToType: Record<string, Post["type"] | "all"> = {
+  All: "all",
   Tweets: "twitter",
   Videos: "youtube",
   Instagram: "instagram",
-  Link :"links" 
+  Links: "links",
 };
 
 export function Dashboard() {
@@ -38,7 +39,7 @@ export function Dashboard() {
           headers: { token: localStorage.getItem("token") || "" },
         });
         setPosts(response.data.posts || []);
-      } catch (err: any) {
+      } catch (err: unknown) {
         setError("Failed to load posts.");
         console.error(err);
       } finally {
@@ -68,9 +69,17 @@ export function Dashboard() {
 
   // --- FILTERING LOGIC ---
   const filteredCards = posts.filter((card) => {
-    if (activeSection === "All") return true;
-    const type = sectionToType[activeSection];
-    return card.type === type;
+    const targetType = sectionToType[activeSection];
+    if (targetType === "all") return true;
+
+    const cardType = card.type?.toLowerCase?.();
+
+    if (targetType === "links") {
+      const isGenericLink = !["twitter", "youtube", "instagram"].includes(cardType || "");
+      return cardType === "links" || isGenericLink;
+    }
+
+    return cardType === targetType;
   });
 
   return (
