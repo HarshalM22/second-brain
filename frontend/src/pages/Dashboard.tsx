@@ -83,7 +83,7 @@ export function Dashboard() {
   });
 
   return (
-    <div className="flex">
+    <div className="flex w-dvh overflow-x-hidden " >
       <CreateContent
         open={createPost}
         onClose={() => setCreatePost(false)}
@@ -92,7 +92,10 @@ export function Dashboard() {
 
       <Sidebar setActiveSection={setActiveSection} />
 
-      <div className="flex-grow bg-slate-200 min-h-screen overflow-auto">
+      <div
+        className="flex-grow bg-slate-200 min-h-screen overflow-auto w-full"
+        style={{ maxWidth: "100vw", overflowX: "hidden" }}
+      >
         {/* Header */}
         <div className="flex justify-between items-center px-8 py-6 bg-slate-200">
           <h1 className="text-2xl font-bold text-gray-800">
@@ -107,7 +110,7 @@ export function Dashboard() {
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="p-6 w-full overflow-x-hidden">
           {loading ? (
             <div className="text-center text-gray-600">Loading posts...</div>
           ) : error ? (
@@ -115,16 +118,17 @@ export function Dashboard() {
           ) : filteredCards.length === 0 ? (
             <div className="text-center text-gray-500">No posts found.</div>
           ) : (
-            <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+            <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 max-w-7xl mx-auto w-full">
               {filteredCards.map((post) => (
-                <Card
-                  key={post.id}
-                  id={post.id}
-                  title={post.title}
-                  type={post.type}
-                  link={post.link}
-                  onDelete={handleDelete}
-                />
+                <div key={post.id} className="w-full max-w-full">
+                  <Card
+                    id={post.id}
+                    title={post.title}
+                    type={post.type}
+                    link={post.link}
+                    onDelete={handleDelete}
+                  />
+                </div>
               ))}
             </div>
           )}
