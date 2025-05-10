@@ -1,8 +1,9 @@
 
 import  jwt  from "jsonwebtoken";
 import { JwtPayload } from "jsonwebtoken";
-const JWT_SECRET = "harshal";
+
 import { Request, Response, NextFunction } from "express";
+import { JWT_SECRET } from "./config";
 
 
 export function auth(req : Request, res:Response, next:NextFunction) {
@@ -15,7 +16,7 @@ export function auth(req : Request, res:Response, next:NextFunction) {
     next();
   } else {
     res.json({
-      MESSAGE: "YOU ARE LOGGED IN ",
+      MESSAGE: "YOU ARE NOT LOGGED IN ",
     });
   }
 }

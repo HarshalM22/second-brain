@@ -1,7 +1,6 @@
 import express from "express";
 const app = express();
 import jwt, { JwtPayload } from "jsonwebtoken";
-const JWT_SECRET = "harshal";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 import cors from "cors";
@@ -9,14 +8,12 @@ import { auth } from "./middleware";
 import { random } from "./utils";
 import { LoginSchema, SignUpSchema } from "./schema";
 import bcrypt from "bcrypt";
+import { JWT_SECRET } from "./config";
 app.use(cors());
 app.use(express.json());
 
-
-
-
 // @ts-ignore
-app.post("/api/v1/second-brain/sign-up", async function (req, res)  {
+app.post("/api/v1/second-brain/sign-up", async function (req, res) {
   const parseResult = SignUpSchema.safeParse(req.body);
 
   if (!parseResult.success) {
@@ -28,7 +25,7 @@ app.post("/api/v1/second-brain/sign-up", async function (req, res)  {
   const { email, password, username } = parseResult.data;
 
   try {
-    const hashedPassword = await bcrypt.hash(password, 4); 
+    const hashedPassword = await bcrypt.hash(password, 4);
 
     const user = await prisma.user.create({
       data: {
@@ -46,7 +43,7 @@ app.post("/api/v1/second-brain/sign-up", async function (req, res)  {
 });
 
 // @ts-ignore
-app.post("/api/v1/second-brain/login", async function (req, res)  {
+app.post("/api/v1/second-brain/login", async function (req, res) {
   const parseResult = LoginSchema.safeParse(req.body);
 
   if (!parseResult.success) {
@@ -79,35 +76,6 @@ app.post("/api/v1/second-brain/login", async function (req, res)  {
     res.status(500).json({ message: "Server error" });
   }
 });
-app.get("/api/v1/second-brain/me", auth, async function (req, res) {
-  const userId = req.body.userId;
-
-  try {
-    const constent = await prisma.content.findMany({
-      where: {
-        userId: userId,
-      },
-    });
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
-    if (constent) {
-      res.json({
-        constent: constent,
-        user: user,
-      });
-    }
-  } catch (e) {
-    res.json({
-      msg: "error",
-      e,
-    });
-  }
-});
-
-
 
 app.post("/api/v1/second-brain/create-post", auth, async function (req, res) {
   const { title, link, userId, type } = req.body;
@@ -139,19 +107,17 @@ app.post("/api/v1/second-brain/create-post", auth, async function (req, res) {
   }
 });
 
-app.get("/api/v1/second-brain/posts",auth,async function(req,res){
-  const {userId} = req.body;
+app.get("/api/v1/second-brain/posts", auth, async function (req, res) {
+  const { userId } = req.body;
   const posts = await prisma.content.findMany({
-    where:{
-      userId : userId 
-    }
-  })
+    where: {
+      userId: userId,
+    },
+  });
   res.json({
-    posts
-  })
-
-})
-
+    posts,
+  });
+});
 
 app.delete("/api/v1/second-brain/delete-post", auth, async function (req, res) {
   const { userId, id } = req.body;
@@ -159,20 +125,20 @@ app.delete("/api/v1/second-brain/delete-post", auth, async function (req, res) {
   try {
     const deletedContent = await prisma.content.delete({
       where: {
-        id: id ,
+        id: id,
         userId: userId,
-      }
-    })
+      },
+    });
 
-    if(deletedContent){
+    if (deletedContent) {
       res.status(200).json({
-        message : "deleted successfully"
-      })
-    }else{
-    res.json({
-      mesaage: "Not deleted"
-    })
-  }
+        message: "deleted successfully",
+      });
+    } else {
+      res.json({
+        mesaage: "Not deleted",
+      });
+    }
   } catch (e) {
     res.json({
       message: "error",
@@ -202,41 +168,38 @@ app.post("/api/v1/second-brain/share", auth, async function (req, res) {
   });
 });
 
-app.get("/api/v1/brain/:shareLink", async function (req,res){
-   const hash = req.params.shareLink
+app.get("/api/v1/brain/:shareLink", async function (req, res) {
+  const hash = req.params.shareLink;
 
-   const link = await prisma.link.findUnique({
-    where:{
-      hash
-    }
-   });
-   
-   if(!link){
+  const link = await prisma.link.findUnique({
+    where: {
+      hash,
+    },
+  });
+
+  if (!link) {
     res.status(411).json({
-      message : "Sorry incorrect input"
-    })
-    return 
-   }
+      message: "Sorry incorrect input",
+    });
+    return;
+  }
 
-   const content = await prisma.content.findFirst({
-      where :{
-        userId : link.userId
-      }})
- 
+  const content = await prisma.content.findFirst({
+    where: {
+      userId: link.userId,
+    },
+  });
+
   const user = await prisma.user.findUnique({
-    where:{
-      id : link.userId
-    }
-  })
+    where: {
+      id: link.userId,
+    },
+  });
   res.json({
-    username : user?.username,
-    content : content
-  })
-
-  
-
-})
-
+    username: user?.username,
+    content: content,
+  });
+});
 
 const port = 3000;
 app.listen(port);
