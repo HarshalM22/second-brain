@@ -54,7 +54,7 @@ export function Sidebar({ setActiveSection }: SidebarProps) {
       </div>
 
       {/* Logout Button */}
-      <div className="px-4 fixed bottom-2 ">
+      <div className="px-4 fixed bottom-2  ">
         <Button
           variant="primary"
           text="Logout"
