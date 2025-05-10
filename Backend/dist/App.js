@@ -154,33 +154,25 @@ app.get("/api/v1/second-brain/posts", middleware_1.auth, function (req, res) {
 // @ts-ignore
 app.delete("/api/v1/second-brain/delete-post", middleware_1.auth, function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { userId, title } = req.body;
+        const { userId, id } = req.body;
+        console.log(userId, id);
         try {
-            const find = yield prisma.content.findFirst({
+            const deletedContent = yield prisma.content.delete({
                 where: {
-                    title: title,
+                    id: id,
                     userId: userId,
-                },
+                }
             });
-            if (find) {
-                const deletePost = yield prisma.content.delete({
-                    where: {
-                        id: find === null || find === void 0 ? void 0 : find.id,
-                    },
+            if (deletedContent) {
+                res.status(200).json({
+                    message: "deleted successfully"
                 });
             }
             else {
-                console.log("post not found");
+                res.json({
+                    mesaage: "Not deleted"
+                });
             }
-            const findAfterDelete = yield prisma.content.findMany({
-                where: {
-                    userId: userId,
-                },
-            });
-            res.json({
-                message: "post deleted",
-                findAfterDelete,
-            });
         }
         catch (e) {
             res.json({
