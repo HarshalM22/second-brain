@@ -8,10 +8,11 @@ import { BACKEND_URL } from "../../config";
 export function Signuppage(){
 
     const usernameref = useRef<HTMLInputElement>(null)
-    const firstnameref = useRef<HTMLInputElement>(null)
-    const lastnameref = useRef<HTMLInputElement>(null)
+    
     const emailref = useRef<HTMLInputElement>(null)
     const passwordref = useRef<HTMLInputElement>(null)
+    console.log(usernameref.current?.value);
+    
     
     const navigate = useNavigate();
     
@@ -20,12 +21,6 @@ export function Signuppage(){
                 <div className=" bg-white border rounded-xl h-auto w-auto p-10 flex flex-col items-center justify-evenly space-y-6">
                    <div className="flex flex-col ">
                     <Inputbox type="text" placeholder="username..." label="Username" referance={usernameref}/>
-                   </div>
-                   <div className="flex flex-col "> 
-                    <Inputbox type="text" placeholder="first Name..." label="First Name" referance={firstnameref}/>
-                   </div>
-                   <div className="flex flex-col ">
-                    <Inputbox type="text" placeholder="last Name..." label="Last Name" referance={lastnameref}/>
                    </div>
                    <div className="flex flex-col ">
                     <Inputbox type="email" placeholder="email..." label="Email" referance={emailref}/>
@@ -38,15 +33,12 @@ export function Signuppage(){
                        
                         username: usernameref.current?.value ,
                         
-                        firstName: firstnameref.current?.value,
-                     
-                        lastName : lastnameref.current?.value,
-                        
                         password : passwordref.current?.value,
                         
                         email: emailref.current?.value
                     })
                     console.log(res.data);
+                    
                     
                     if(res.status=== 200){
                         navigate("/login")
