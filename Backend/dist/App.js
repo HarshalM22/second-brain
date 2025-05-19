@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const app = (0, express_1.default)();
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const JWT_SECRET = "harshal";
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const cors_1 = __importDefault(require("cors"));
@@ -23,6 +22,7 @@ const middleware_1 = require("./middleware");
 const utils_1 = require("./utils");
 const schema_1 = require("./schema");
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const config_1 = require("./config");
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 // @ts-ignore
@@ -36,7 +36,7 @@ app.post("/api/v1/second-brain/sign-up", function (req, res) {
         }
         const { email, password, username } = parseResult.data;
         try {
-            const hashedPassword = yield bcrypt_1.default.hash(password, 4); // saltRounds = 10
+            const hashedPassword = yield bcrypt_1.default.hash(password, 4);
             const user = yield prisma.user.create({
                 data: {
                     username,
@@ -73,41 +73,12 @@ app.post("/api/v1/second-brain/login", function (req, res) {
             if (!isPasswordValid) {
                 return res.status(401).json({ message: "Invalid password" });
             }
-            const token = jsonwebtoken_1.default.sign({ userId: user.id }, JWT_SECRET);
+            const token = jsonwebtoken_1.default.sign({ userId: user.id }, config_1.JWT_SECRET);
             res.status(200).json({ token });
         }
         catch (e) {
             console.log(e);
             res.status(500).json({ message: "Server error" });
-        }
-    });
-});
-app.get("/api/v1/second-brain/me", middleware_1.auth, function (req, res) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const userId = req.body.userId;
-        try {
-            const constent = yield prisma.content.findMany({
-                where: {
-                    userId: userId,
-                },
-            });
-            const user = yield prisma.user.findUnique({
-                where: {
-                    id: userId,
-                },
-            });
-            if (constent) {
-                res.json({
-                    constent: constent,
-                    user: user,
-                });
-            }
-        }
-        catch (e) {
-            res.json({
-                msg: "error",
-                e,
-            });
         }
     });
 });
@@ -147,11 +118,11 @@ app.get("/api/v1/second-brain/posts", middleware_1.auth, function (req, res) {
         const { userId } = req.body;
         const posts = yield prisma.content.findMany({
             where: {
-                userId: userId
-            }
+                userId: userId,
+            },
         });
         res.json({
-            posts
+            posts,
         });
     });
 });
@@ -163,16 +134,16 @@ app.delete("/api/v1/second-brain/delete-post", middleware_1.auth, function (req,
                 where: {
                     id: id,
                     userId: userId,
-                }
+                },
             });
             if (deletedContent) {
                 res.status(200).json({
-                    message: "deleted successfully"
+                    message: "deleted successfully",
                 });
             }
             else {
                 res.json({
-                    mesaage: "Not deleted"
+                    mesaage: "Not deleted",
                 });
             }
         }
@@ -212,28 +183,28 @@ app.get("/api/v1/brain/:shareLink", function (req, res) {
         const hash = req.params.shareLink;
         const link = yield prisma.link.findUnique({
             where: {
-                hash
-            }
+                hash,
+            },
         });
         if (!link) {
             res.status(411).json({
-                message: "Sorry incorrect input"
+                message: "Sorry incorrect input",
             });
             return;
         }
         const content = yield prisma.content.findFirst({
             where: {
-                userId: link.userId
-            }
+                userId: link.userId,
+            },
         });
         const user = yield prisma.user.findUnique({
             where: {
-                id: link.userId
-            }
+                id: link.userId,
+            },
         });
         res.json({
             username: user === null || user === void 0 ? void 0 : user.username,
-            content: content
+            content: content,
         });
     });
 });

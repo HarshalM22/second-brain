@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "npx tsc -b && node ./dist/App.js"
+    "dev": "npx tsc -b && node ./dist/App.js",
+    "build": "tsc -b",
+    "dev:docker": "npx prisma migrate dev && node ./dist/App.js"
   },
   "author": "",
   "license": "ISC",
