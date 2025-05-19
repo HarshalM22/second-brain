@@ -7,11 +7,11 @@ import { Inputbox } from "../components/Inputbox";
 import { BACKEND_URL } from "../../config";
 export function Signuppage(){
 
-    const usernameref = useRef()
-    const firstnameref = useRef()
-    const lastnameref = useRef()
-    const emailref = useRef()
-    const passwordref = useRef()
+    const usernameref = useRef<HTMLInputElement>(null)
+    const firstnameref = useRef<HTMLInputElement>(null)
+    const lastnameref = useRef<HTMLInputElement>(null)
+    const emailref = useRef<HTMLInputElement>(null)
+    const passwordref = useRef<HTMLInputElement>(null)
     
     const navigate = useNavigate();
     
@@ -35,10 +35,15 @@ export function Signuppage(){
                    </div>
                    <button className="bg-secondary px-6 py-2 rounded-xl" onClick={async()=>{
                    const res = await axios.post(`${BACKEND_URL}/api/v1/second-brain/sign-up`,{
+                       
                         username: usernameref.current?.value ,
+                        
                         firstName: firstnameref.current?.value,
+                     
                         lastName : lastnameref.current?.value,
+                        
                         password : passwordref.current?.value,
+                        
                         email: emailref.current?.value
                     })
                     console.log(res.data);

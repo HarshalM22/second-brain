@@ -5,9 +5,9 @@ import { useRef } from "react"
  import { BACKEND_URL } from "../../config";
  export function Loginpage() {
      const navigate = useNavigate();
-     const usernameref = useRef();
-     const emailref = useRef();
-     const passwordref = useRef();
+     const usernameref = useRef<HTMLInputElement>(null)
+     const emailref = useRef<HTMLInputElement>(null)
+     const passwordref = useRef<HTMLInputElement>(null)
  
  
      return (
@@ -26,8 +26,11 @@ import { useRef } from "react"
                      async () => {
                          
                              const response = await axios.post(`${BACKEND_URL}/api/v1/second-brain/login`, {
+                                
                                  username : usernameref.current?.value,
+                                 
                                  email: emailref.current?.value,
+                                 
                                  password : passwordref.current?.value
                              })
                              if(response.status===200){
