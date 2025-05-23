@@ -5,7 +5,7 @@ import { Youtube } from "../icons/Youtube";
 import { InstagramIcon } from "../icons/InstagramIcon";
 import axios from "axios";
 // import { BACKEND_URL } from "../../config";
-const BACKEND_URL = import.meta.env.BACKEND_URL;
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 import { Link } from "lucide-react";
 
 interface Props {
