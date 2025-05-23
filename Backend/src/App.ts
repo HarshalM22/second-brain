@@ -3,6 +3,8 @@ const app = express();
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
+import dotenv from 'dotenv';
+dotenv.config();
 const JWT_SECRET =  process.env.JWT_SECRET || "ggiort";
 import cors from "cors";
 import { auth } from "./middleware";
