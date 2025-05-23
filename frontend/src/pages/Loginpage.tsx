@@ -3,7 +3,7 @@ import { useRef } from "react"
  import axios from "axios";
  import { Inputbox } from "../components/Inputbox";
 //  import { BACKEND_URL } from "../../config";
-const BACKEND_URL = process.env.BACKEND_URL
+const BACKEND_URL = import.meta.env.BACKEND_URL;
 
  export function Loginpage() {
      const navigate = useNavigate();
