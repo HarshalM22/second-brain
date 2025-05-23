@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "npx tsc -b && node ./dist/App.js",
-    "build": "tsc -b",
+    "build": "npm install && tsc -b",
     "dev:docker": "npx prisma migrate dev && node ./dist/App.js"
   },
   "author": "",
