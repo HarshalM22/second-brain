@@ -3,6 +3,8 @@ import { Button } from "../components/Button";
 import { Card } from "../components/Card";
 import { Sidebar } from "../components/Sidebar";
 import { Plus } from "../icons/Plus";
+import dotenv from 'dotenv';
+dotenv.config();
 import axios from "axios";
 // import { BACKEND_URL } from "../../config";
 const BACKEND_URL = process.env.BACKEND_URL
