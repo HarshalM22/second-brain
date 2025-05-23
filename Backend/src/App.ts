@@ -3,12 +3,12 @@ const app = express();
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
+const JWT_SECRET =  process.env.JWT_SECRET || "ggiort";
 import cors from "cors";
 import { auth } from "./middleware";
 import { random } from "./utils";
 import { LoginSchema, SignUpSchema } from "./schema";
 import bcrypt from "bcrypt";
-import { JWT_SECRET } from "./config";
 app.use(cors());
 app.use(express.json());
 
