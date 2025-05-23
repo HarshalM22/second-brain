@@ -6,6 +6,8 @@ import { Plus } from "../icons/Plus";
 import axios from "axios";
 // import { BACKEND_URL } from "../../config";
 const BACKEND_URL = process.env.BACKEND_URL
+
+
 import { CreateContent } from "../components/CreateContent";
 
 interface Post {

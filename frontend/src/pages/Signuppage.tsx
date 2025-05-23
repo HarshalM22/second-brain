@@ -6,6 +6,8 @@ import axios from "axios";
 import { Inputbox } from "../components/Inputbox";
 // import { BACKEND_URL } from "../../config";
 const BACKEND_URL = process.env.BACKEND_URL
+console.log(BACKEND_URL);
+
 
 export function Signuppage(){
 
