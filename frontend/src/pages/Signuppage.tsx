@@ -4,7 +4,9 @@ import { useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Inputbox } from "../components/Inputbox";
-import { BACKEND_URL } from "../../config";
+// import { BACKEND_URL } from "../../config";
+const BACKEND_URL = process.env.BACKEND_URL
+
 export function Signuppage(){
 
     const usernameref = useRef<HTMLInputElement>(null)

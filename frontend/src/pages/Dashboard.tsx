@@ -4,7 +4,8 @@ import { Card } from "../components/Card";
 import { Sidebar } from "../components/Sidebar";
 import { Plus } from "../icons/Plus";
 import axios from "axios";
-import { BACKEND_URL } from "../../config";
+// import { BACKEND_URL } from "../../config";
+const BACKEND_URL = process.env.BACKEND_URL
 import { CreateContent } from "../components/CreateContent";
 
 interface Post {
